@@ -61,9 +61,14 @@ namespace UnityEditor.Tilemaps
         /// <param name="bounds">The cooridnate boundries to fill.</param>
         public override void BoxFill(GridLayout grid, GameObject brushTarget, BoundsInt bounds)
         {
-            foreach(Vector3Int tilePosition in bounds.allPositionsWithin) {
-                this.Paint(grid, brushTarget, tilePosition);
-            }
+            foreach(Vector3Int tilePosition in bounds.allPositionsWithin)
+                Paint(grid, brushTarget, tilePosition);
+        }
+
+        public override void BoxErase(GridLayout grid, GameObject brushTarget, BoundsInt bounds)
+        {
+            foreach (Vector3Int tilePosition in bounds.allPositionsWithin)
+                Erase(grid, brushTarget, tilePosition);
         }
 
         /// <summary>
@@ -81,6 +86,24 @@ namespace UnityEditor.Tilemaps
                 if (m_EraseAnyObjects || PrefabUtility.GetCorrespondingObjectFromSource(objectInCell) == m_Prefab)
                 {
                     Undo.DestroyObjectImmediate(objectInCell);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Pick prefab from selected Tilemap, given the coordinates of the cells.
+        /// </summary>
+        public override void Pick(GridLayout gridLayout, GameObject brushTarget, BoundsInt position, Vector3Int pickStart)
+        {
+            if (brushTarget == null)
+            {
+                return;
+            }
+            foreach (var objectInCell in GetObjectsInCell(gridLayout, brushTarget.transform, position.position))
+            {
+                if (objectInCell)
+                {
+                    m_Prefab = PrefabUtility.GetCorrespondingObjectFromSource(objectInCell);
                 }
             }
         }
@@ -109,10 +132,20 @@ namespace UnityEditor.Tilemaps
             /// </summary>
             public override void OnPaintInspectorGUI()
             {
+                const string eraseAnyObjectsTooltip =
+                    "If true, erases any GameObjects that are in a given position " +
+                    "within the selected layers with Erasing. " +
+                    "Otherwise, erases only GameObjects that are created " +
+                    "from owned Prefab in a given position within the selected layers with Erasing.";
+
                 base.OnPaintInspectorGUI();
+
                 m_SerializedObject.UpdateIfRequiredOrScript();
                 EditorGUILayout.PropertyField(m_Prefab, true);
-                prefabBrush.m_EraseAnyObjects = EditorGUILayout.Toggle("Erase Any Objects", prefabBrush.m_EraseAnyObjects);
+                prefabBrush.m_EraseAnyObjects = EditorGUILayout.Toggle(
+                    new GUIContent("Erase Any Objects", eraseAnyObjectsTooltip),
+                    prefabBrush.m_EraseAnyObjects);
+
                 m_SerializedObject.ApplyModifiedPropertiesWithoutUndo();
             }
         }
