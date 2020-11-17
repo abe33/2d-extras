@@ -33,6 +33,11 @@ namespace UnityEngine
         public virtual Type m_NeighborType => typeof(TilingRuleOutput.Neighbor);
 
         /// <summary>
+        /// The strategy to apply when checking neighbors that are out of
+        /// the tilemap's bounds
+        /// </summary>
+        public BoundsNeighborStrategy m_BoundsNeighborStrategy;
+        /// <summary>
         /// The Default Sprite set when creating a new Rule.
         /// </summary>
         public Sprite m_DefaultSprite;
@@ -67,6 +72,25 @@ namespace UnityEngine
         /// Number of rotations the RuleTile can be rotated by for matching.
         /// </summary>
         public int m_RotationCount => 360 / m_RotationAngle;
+
+        /// <summary>
+        /// The enumeration for the various strategies when handling neighbors of a rule at the edge of the tilemap bounds.
+        /// </summary>
+        public enum BoundsNeighborStrategy {
+            /// <summary>
+            /// No specific strategy is applied, the original behavior occurs.
+            /// </summary>
+            None,
+            /// <summary>
+            /// The neighbor position is clamped within the tilemap bounds.
+            /// </summary>
+            Clamp,
+            /// <summary>
+            /// The neighbor position is wrapped on the other side of the
+            /// tilemap bounds.
+            /// </summary>
+            Repeat,
+        }
 
         /// <summary>
         /// The data structure holding the Rule information for matching Rule Tiles with
@@ -602,7 +626,7 @@ namespace UnityEngine
             var neighborPositionsRuleTile = neighborPositionsSet.Value;
             foreach (Vector3Int offset in neighborPositionsRuleTile)
             {
-                Vector3Int offsetPosition = GetOffsetPositionReverse(position, offset);
+                Vector3Int offsetPosition = GetNeighborPosition(position, offset * -1, tilemap);
                 TileBase tile = tilemap.GetTile(offsetPosition);
                 RuleTile ruleTile = null;
 
@@ -761,7 +785,7 @@ namespace UnityEngine
             {
                 int neighbor = rule.m_Neighbors[i];
                 Vector3Int positionOffset = GetRotatedPosition(rule.m_NeighborPositions[i], angle);
-                TileBase other = tilemap.GetTile(GetOffsetPosition(position, positionOffset));
+                TileBase other = GetNeighbor(position, positionOffset, tilemap);
                 if (!RuleMatch(neighbor, other))
                 {
                     return false;
@@ -786,7 +810,7 @@ namespace UnityEngine
             {
                 int neighbor = rule.m_Neighbors[i];
                 Vector3Int positionOffset = GetMirroredPosition(rule.m_NeighborPositions[i], mirrorX, mirrorY);
-                TileBase other = tilemap.GetTile(GetOffsetPosition(position, positionOffset));
+                TileBase other = GetNeighbor(position, positionOffset, tilemap);
                 if (!RuleMatch(neighbor, other))
                 {
                     return false;
@@ -853,6 +877,98 @@ namespace UnityEngine
         public virtual Vector3Int GetOffsetPositionReverse(Vector3Int position, Vector3Int offset)
         {
             return position - offset;
+        }
+
+        public virtual TileBase GetNeighbor(Vector3Int position, Vector3Int offset, ITilemap tilemap) {
+            return tilemap.GetTile(GetNeighborPosition(position, offset, tilemap));
+        }
+
+        public virtual Vector3Int GetNeighborPosition(Vector3Int position, Vector3Int offset, ITilemap tilemap) {
+            Vector3Int offsetPosition = GetOffsetPosition(position, offset);
+            switch(m_BoundsNeighborStrategy) {
+                case BoundsNeighborStrategy.None:
+                    return offsetPosition;
+                case BoundsNeighborStrategy.Clamp:
+                    return ClampPosition(offsetPosition, tilemap);
+                case BoundsNeighborStrategy.Repeat:
+                    return WrapPosition(offsetPosition, tilemap);
+                default:
+                    return offsetPosition;
+            }
+        }
+
+        public Vector3Int ClampPosition(Vector3Int position, ITilemap tilemap)
+        {
+            BoundsInt bounds = tilemap.cellBounds;
+            Vector3Int clampedPosition = new Vector3Int(
+                position.x, position.y, position.z
+            );
+
+            if(position.x >= bounds.max.x)
+            {
+                clampedPosition.x = bounds.max.x - 1;
+            }
+            else if (position.x < bounds.min.x)
+            {
+                clampedPosition.x = bounds.min.x;
+            }
+
+            if(position.y >= bounds.max.y)
+            {
+                clampedPosition.y = bounds.max.y - 1;
+            }
+            else if (position.y < bounds.min.y)
+            {
+                clampedPosition.y = bounds.min.y;
+            }
+
+            if(position.z >= bounds.max.z)
+            {
+                clampedPosition.z = bounds.max.z - 1;
+            }
+            else if (position.z < bounds.min.z)
+            {
+                clampedPosition.z = bounds.min.z;
+            }
+
+            return clampedPosition;
+        }
+
+        public Vector3Int WrapPosition(Vector3Int position, ITilemap tilemap)
+        {
+            BoundsInt bounds = tilemap.cellBounds;
+            Vector3Int wrappedPosition = new Vector3Int(
+                position.x, position.y, position.z
+            );
+
+            if (position.x > bounds.max.x)
+            {
+                wrappedPosition.x = position.x - bounds.size.x;
+            }
+            else if (position.x < bounds.min.x)
+            {
+                wrappedPosition.x = position.x + bounds.size.x;
+            }
+
+            if (position.y > bounds.max.y)
+            {
+                wrappedPosition.y = position.y - bounds.size.y;
+            }
+            else if (position.y < bounds.min.y)
+            {
+                wrappedPosition.y = position.y + bounds.size.y;
+            }
+
+            if(position.z > bounds.max.z)
+            {
+                wrappedPosition.z = position.z - bounds.size.z;
+            }
+            else if (position.z < bounds.min.z)
+            {
+                wrappedPosition.z = position.z + bounds.size.z;
+            }
+
+            return wrappedPosition;
         }
     }
 }
