@@ -45,6 +45,19 @@ namespace UnityEngine
         public Tile.ColliderType m_DefaultColliderType = Tile.ColliderType.Sprite;
 
         /// <summary>
+        /// The default translation when creating a new Rule.
+        /// </summary>
+        public Vector3 m_DefaultTranslate = new Vector3(0,0,0);
+        /// <summary>
+        /// The default rotation when creating a new Rule.
+        /// </summary>
+        public Vector3 m_DefaultRotate = new Vector3(0,0,0);
+        /// <summary>
+        /// The default scale when creating a new Rule.
+        /// </summary>
+        public Vector3 m_DefaultScale = new Vector3(1,1,1);
+
+        /// <summary>
         /// Angle in which the RuleTile is rotated by for matching in Degrees.
         /// </summary>
         public virtual int m_RotationAngle => 90;
@@ -93,6 +106,18 @@ namespace UnityEngine
             /// The randomized transform output for this Rule.
             /// </summary>
             public Transform m_RandomTransform;
+            /// <summary>
+            /// The translation to apply for this Rule.
+            /// </summary>
+            public Vector3 m_TileTranslate = new Vector3(0,0,0);
+            /// <summary>
+            /// The rotation to apply for this Rule.
+            /// </summary>
+            public Vector3 m_TileRotate = new Vector3(0,0,0);
+            /// <summary>
+            /// The scale to apply for this Rule.
+            /// </summary>
+            public Vector3 m_TileScale = new Vector3(1,1,1);
 
             /// <summary>
             /// The enumeration for matching Neighbors when matching Rule Tiles
@@ -388,7 +413,11 @@ namespace UnityEngine
                                 transform = ApplyRandomTransform(rule.m_RandomTransform, transform, rule.m_PerlinScale, position);
                             break;
                     }
-                    tileData.transform = transform;
+                    tileData.transform = transform * Matrix4x4.TRS(
+                        rule.m_TileTranslate,
+                        Quaternion.Euler(rule.m_TileRotate),
+                        rule.m_TileScale
+                    );
                     tileData.gameObject = rule.m_GameObject;
                     tileData.colliderType = rule.m_ColliderType;
                     break;
@@ -708,7 +737,7 @@ namespace UnityEngine
         }
 
         /// <summary>
-        /// Gets a rotated position given its original position and the rotation in degrees. 
+        /// Gets a rotated position given its original position and the rotation in degrees.
         /// </summary>
         /// <param name="position">Original position of Tile.</param>
         /// <param name="rotation">Rotation in degrees.</param>

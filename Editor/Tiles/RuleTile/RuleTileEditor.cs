@@ -111,7 +111,7 @@ namespace UnityEditor
         /// <summary>
         /// Default height for a Rule Element
         /// </summary>
-        public const float k_DefaultElementHeight = 48f;
+        public const float k_DefaultElementHeight = 96f;
         /// <summary>
         /// Padding between Rule Elements
         /// </summary>
@@ -190,7 +190,7 @@ namespace UnityEditor
         }
 
         /// <summary>
-        /// Gets the GUI element height for a TilingRule 
+        /// Gets the GUI element height for a TilingRule
         /// </summary>
         /// <param name="rule">Rule to get height for</param>
         /// <returns>GUI element height for a TilingRule</returns>
@@ -205,7 +205,7 @@ namespace UnityEditor
         }
 
         /// <summary>
-        /// Gets the GUI element height for a TilingRuleOutput 
+        /// Gets the GUI element height for a TilingRuleOutput
         /// </summary>
         /// <param name="rule">Rule to get height for</param>
         /// <returns>GUI element height for a TilingRuleOutput </returns>
@@ -268,6 +268,9 @@ namespace UnityEditor
             rule.m_Sprites[0] = tile.m_DefaultSprite;
             rule.m_GameObject = tile.m_DefaultGameObject;
             rule.m_ColliderType = tile.m_DefaultColliderType;
+            rule.m_TileTranslate = tile.m_DefaultTranslate;
+            rule.m_TileRotate = tile.m_DefaultRotate;
+            rule.m_TileScale = tile.m_DefaultScale;
             tile.m_TilingRules.Add(rule);
         }
 
@@ -361,6 +364,9 @@ namespace UnityEditor
             tile.m_DefaultSprite = EditorGUILayout.ObjectField("Default Sprite", tile.m_DefaultSprite, typeof(Sprite), false) as Sprite;
             tile.m_DefaultGameObject = EditorGUILayout.ObjectField("Default GameObject", tile.m_DefaultGameObject, typeof(GameObject), false) as GameObject;
             tile.m_DefaultColliderType = (Tile.ColliderType)EditorGUILayout.EnumPopup("Default Collider", tile.m_DefaultColliderType);
+            tile.m_DefaultTranslate = (Vector3)EditorGUILayout.Vector3Field("Default Translate", tile.m_DefaultTranslate);
+            tile.m_DefaultRotate = (Vector3)EditorGUILayout.Vector3Field("Default Rotate", tile.m_DefaultRotate);
+            tile.m_DefaultScale = (Vector3)EditorGUILayout.Vector3Field("Default Scale", tile.m_DefaultScale);
 
             DrawCustomFields(false);
 
@@ -677,6 +683,16 @@ namespace UnityEditor
             tilingRule.m_Output = (RuleTile.TilingRule.OutputSprite)EditorGUI.EnumPopup(new Rect(rect.xMin + k_LabelWidth, y, rect.width - k_LabelWidth, k_SingleLineHeight), tilingRule.m_Output);
             y += k_SingleLineHeight;
 
+            GUI.Label(new Rect(rect.xMin, y, k_LabelWidth, k_SingleLineHeight), "Translate");
+            tilingRule.m_TileTranslate = (Vector3)EditorGUI.Vector3Field(new Rect(rect.xMin + k_LabelWidth, y, rect.width - k_LabelWidth, k_SingleLineHeight), "", tilingRule.m_TileTranslate);
+            y += k_SingleLineHeight;
+            GUI.Label(new Rect(rect.xMin, y, k_LabelWidth, k_SingleLineHeight), "Rotate");
+            tilingRule.m_TileRotate = (Vector3)EditorGUI.Vector3Field(new Rect(rect.xMin + k_LabelWidth, y, rect.width - k_LabelWidth, k_SingleLineHeight), "", tilingRule.m_TileRotate);
+            y += k_SingleLineHeight;
+            GUI.Label(new Rect(rect.xMin, y, k_LabelWidth, k_SingleLineHeight), "Scale");
+            tilingRule.m_TileScale = (Vector3)EditorGUI.Vector3Field(new Rect(rect.xMin + k_LabelWidth, y, rect.width - k_LabelWidth, k_SingleLineHeight), "", tilingRule.m_TileScale);
+            y += k_SingleLineHeight;
+
             if (tilingRule.m_Output == RuleTile.TilingRule.OutputSprite.Animation)
             {
                 GUI.Label(new Rect(rect.xMin, y, k_LabelWidth, k_SingleLineHeight), "Speed");
@@ -906,6 +922,26 @@ namespace UnityEditor
             {
                 Debug.LogError("Unable to paste rules from system copy buffer");
             }
+        }
+        /// <summary>
+        /// Resets all tile transformations
+        /// </summary>
+        /// <param name="item">MenuCommand storing the RuleTile to copy from</param>
+        [MenuItem("CONTEXT/RuleTile/Reset Rules Transformations")]
+        public static void ResetRulesTransforms(MenuCommand item)
+        {
+            RuleTile tile = item.context as RuleTile;
+            if (tile == null)
+                return;
+
+            foreach(RuleTile.TilingRule rule in tile.m_TilingRules) {
+                rule.m_TileTranslate = tile.m_DefaultTranslate;
+                rule.m_TileRotate = tile.m_DefaultRotate;
+                rule.m_TileScale = tile.m_DefaultScale;
+            }
+
+            EditorUtility.SetDirty(tile);
+            SceneView.RepaintAll();
         }
     }
 }
