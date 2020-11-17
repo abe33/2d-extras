@@ -32,7 +32,7 @@ namespace UnityEditor
         private const string s_Fixed = "iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAAZdEVYdFNvZnR3YXJlAHBhaW50Lm5ldCA0LjAuMjHxIGmVAAAA50lEQVQ4T51Ruw6CQBCkwBYKWkIgQAs9gfgCvgb4BML/qWBM9Bdo9QPIuVOQ3JIzosVkc7Mzty9NCPE3lORaKMm1YA/LsnTXdbdhGJ6iKHoVRTEi+r4/OI6zN01Tl/XM7HneLsuyW13XU9u2ous6gYh3kiR327YPsp6ZgyDom6aZYFqiqqqJ8mdZz8xoca64BHjkZT0zY0aVcQbysp6Z4zj+Vvkp65mZttxjOSozdkEzD7KemekcxzRNHxDOHSDiQ/DIy3pmpjtuSJBThStGKMtyRKSOLnSm3DCMz3f+FUpyLZTkOgjtDSWORSDbpbmNAAAAAElFTkSuQmCC";
 
         private static readonly string k_UndoName = L10n.Tr("Change RuleTile");
-        
+
         private static Texture2D[] s_Arrows;
 
         /// <summary>
@@ -93,14 +93,14 @@ namespace UnityEditor
                 EditorGUIUtility.TrTextContent(
                     "Drag Sprite or Sprite Texture assets \n" +
                     " to start creating a Rule Tile.");
-            
+
             public static readonly GUIContent extendNeighbor = EditorGUIUtility.TrTextContent("Extend Neighbor"
                 , "Enabling this allows you to increase the range of neighbors beyond the 3x3 box.");
 
             public static readonly GUIContent numberOfTilingRules = EditorGUIUtility.TrTextContent(
                 "Number of Tiling Rules"
                 , "Change this to adjust of the number of tiling rules.");
-            
+
             public static readonly GUIContent tilingRules = EditorGUIUtility.TrTextContent("Tiling Rules");
             public static readonly GUIContent tilingRulesGameObject = EditorGUIUtility.TrTextContent("GameObject"
                 , "The GameObject for the Tile which fits this Rule.");
@@ -133,7 +133,7 @@ namespace UnityEditor
                     textColor = Color.black
                 }
             };
-            
+
             public static readonly GUIStyle extendNeighborsDarkStyle = new GUIStyle()
             {
                 alignment = TextAnchor.MiddleLeft,
@@ -145,17 +145,17 @@ namespace UnityEditor
                 }
             };
         }
-        
+
         /// <summary>
         /// The RuleTile being edited
         /// </summary>
         public RuleTile tile => target as RuleTile;
-        
+
         /// <summary>
         /// List of Sprites for Drag and Drop
         /// </summary>
         private List<Sprite> dragAndDropSprites;
-        
+
         /// <summary>
         /// Reorderable list for Rules
         /// </summary>
@@ -185,7 +185,7 @@ namespace UnityEditor
         /// <summary>
         /// Default height for a Rule Element
         /// </summary>
-        public const float k_DefaultElementHeight = 48f;
+        public const float k_DefaultElementHeight = 96f;
         /// <summary>
         /// Padding between Rule Elements
         /// </summary>
@@ -202,7 +202,7 @@ namespace UnityEditor
         private SerializedProperty m_TilingRules;
 
         private MethodInfo m_ClearCacheMethod;
-        
+
         /// <summary>
         /// OnEnable for the RuleTileEditor
         /// </summary>
@@ -225,7 +225,7 @@ namespace UnityEditor
                 if (m_ClearCacheMethod == null)
                     m_ClearCacheMethod = rolType.GetMethod("ClearCache", BindingFlags.Instance | BindingFlags.NonPublic);
             }
-            
+
             m_TilingRules = serializedObject.FindProperty("m_TilingRules");
         }
 
@@ -295,7 +295,7 @@ namespace UnityEditor
         }
 
         /// <summary>
-        /// Gets the GUI element height for a TilingRule 
+        /// Gets the GUI element height for a TilingRule
         /// </summary>
         /// <param name="rule">Rule to get height for</param>
         /// <returns>GUI element height for a TilingRule</returns>
@@ -310,7 +310,7 @@ namespace UnityEditor
         }
 
         /// <summary>
-        /// Gets the GUI element height for a TilingRuleOutput 
+        /// Gets the GUI element height for a TilingRuleOutput
         /// </summary>
         /// <param name="rule">Rule to get height for</param>
         /// <returns>GUI element height for a TilingRuleOutput </returns>
@@ -375,8 +375,8 @@ namespace UnityEditor
 
             var count = m_TilingRules.arraySize;
             ResizeRuleTileList(count + 1);
-            
-            if (list.index == -1  || list.index >= list.count)
+
+            if (list.index == -1 || list.index >= list.count)
                 tile.m_TilingRules[count] = rule;
             else
             {
@@ -396,10 +396,10 @@ namespace UnityEditor
 
             var copyRule = tile.m_TilingRules[list.index];
             var rule = copyRule.Clone();
-            
+
             var count = m_TilingRules.arraySize;
             ResizeRuleTileList(count + 1);
-            
+
             tile.m_TilingRules.Insert(list.index + 1, rule);
             tile.m_TilingRules.RemoveAt(count + 1);
             if (list.IsSelected(list.index))
@@ -421,7 +421,7 @@ namespace UnityEditor
                 OnAddElement(list);
             }
         }
-        
+
         /// <summary>
         /// Saves any changes to the RuleTile
         /// </summary>
@@ -498,7 +498,7 @@ namespace UnityEditor
             if (EditorGUI.EndChangeCheck())
             {
                 if (m_ClearCacheMethod != null)
-                    m_ClearCacheMethod.Invoke(m_ReorderableList, null);  
+                    m_ClearCacheMethod.Invoke(m_ReorderableList, null);
             }
         }
 
@@ -519,7 +519,7 @@ namespace UnityEditor
             DrawCustomFields(false);
 
             EditorGUILayout.Space();
-            
+
             EditorGUI.BeginChangeCheck();
             int count = EditorGUILayout.DelayedIntField(Styles.numberOfTilingRules, tile.m_TilingRules?.Count ?? 0);
             if (count < 0)
@@ -534,8 +534,8 @@ namespace UnityEditor
                 EditorGUI.DrawRect(rect, dragAndDropActive && rect.Contains(Event.current.mousePosition) ? Color.white : Color.black);
                 var innerRect = new Rect(rect.x + 1, rect.y + 1, rect.width - 2, rect.height - 2);
                 EditorGUI.DrawRect(innerRect, EditorGUIUtility.isProSkin
-                    ? (Color) new Color32 (56, 56, 56, 255)
-                    : (Color) new Color32 (194, 194, 194, 255));
+                    ? (Color)new Color32(56, 56, 56, 255)
+                    : (Color)new Color32(194, 194, 194, 255));
                 DisplayClipboardText(Styles.emptyRuleTileInfo, rect);
                 GUILayout.Space(rect.height);
                 EditorGUILayout.Space();
@@ -929,7 +929,7 @@ namespace UnityEditor
                        && dragAndDropSprites.Count > 0;
             }
         }
-        
+
         private static List<Sprite> GetSpritesFromTexture(Texture2D texture)
         {
             string path = AssetDatabase.GetAssetPath(texture);
@@ -946,7 +946,7 @@ namespace UnityEditor
 
             return sprites;
         }
-        
+
         private static List<Sprite> GetValidSingleSprites(Object[] objects)
         {
             List<Sprite> result = new List<Sprite>();
@@ -967,7 +967,7 @@ namespace UnityEditor
             }
             return result;
         }
-        
+
         private void HandleDragAndDrop(Rect guiRect)
         {
             if (DragAndDrop.objectReferences.Length == 0 || !guiRect.Contains(Event.current.mousePosition))
@@ -976,32 +976,32 @@ namespace UnityEditor
             switch (Event.current.type)
             {
                 case EventType.DragUpdated:
-                {
-                    dragAndDropSprites = GetValidSingleSprites(DragAndDrop.objectReferences);
-                    if (dragAndDropActive)
                     {
-                        DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
-                        Event.current.Use();
-                        GUI.changed = true;
+                        dragAndDropSprites = GetValidSingleSprites(DragAndDrop.objectReferences);
+                        if (dragAndDropActive)
+                        {
+                            DragAndDrop.visualMode = DragAndDropVisualMode.Copy;
+                            Event.current.Use();
+                            GUI.changed = true;
+                        }
                     }
-                }
                     break;
                 case EventType.DragPerform:
-                {
-                    if (!dragAndDropActive)
-                        return;
-
-                    Undo.RegisterCompleteObjectUndo(tile, "Drag and Drop to Rule Tile");
-                    ResizeRuleTileList(dragAndDropSprites.Count);
-                    for (int i = 0; i < dragAndDropSprites.Count; ++i)
                     {
-                        tile.m_TilingRules[i].m_Sprites[0] = dragAndDropSprites[i];
+                        if (!dragAndDropActive)
+                            return;
+
+                        Undo.RegisterCompleteObjectUndo(tile, "Drag and Drop to Rule Tile");
+                        ResizeRuleTileList(dragAndDropSprites.Count);
+                        for (int i = 0; i < dragAndDropSprites.Count; ++i)
+                        {
+                            tile.m_TilingRules[i].m_Sprites[0] = dragAndDropSprites[i];
+                        }
+                        DragAndDropClear();
+                        GUI.changed = true;
+                        EditorUtility.SetDirty(tile);
+                        GUIUtility.ExitGUI();
                     }
-                    DragAndDropClear();
-                    GUI.changed = true;
-                    EditorUtility.SetDirty(tile);
-                    GUIUtility.ExitGUI();
-                }
                     break;
                 case EventType.Repaint:
                     // Handled in Render()
@@ -1014,14 +1014,14 @@ namespace UnityEditor
                 DragAndDropClear();
             }
         }
-        
+
         private void DragAndDropClear()
         {
             dragAndDropSprites = null;
             DragAndDrop.visualMode = DragAndDropVisualMode.None;
             Event.current.Use();
         }
-        
+
         /// <summary>
         /// Whether the RuleTile has a preview GUI
         /// </summary>
@@ -1217,6 +1217,27 @@ namespace UnityEditor
             {
                 Debug.LogError("Unable to paste rules from system copy buffer");
             }
+        }
+        /// <summary>
+        /// Resets all tile transformations
+        /// </summary>
+        /// <param name="item">MenuCommand storing the RuleTile to copy from</param>
+        [MenuItem("CONTEXT/RuleTile/Reset Rules Transformations")]
+        public static void ResetRulesTransforms(MenuCommand item)
+        {
+            RuleTile tile = item.context as RuleTile;
+            if (tile == null)
+                return;
+
+            foreach (RuleTile.TilingRule rule in tile.m_TilingRules)
+            {
+                rule.m_TileTranslate = tile.m_DefaultTranslate;
+                rule.m_TileRotate = tile.m_DefaultRotate;
+                rule.m_TileScale = tile.m_DefaultScale;
+            }
+
+            EditorUtility.SetDirty(tile);
+            SceneView.RepaintAll();
         }
     }
 }
