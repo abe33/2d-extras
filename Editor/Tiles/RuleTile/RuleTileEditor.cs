@@ -364,6 +364,7 @@ namespace UnityEditor
             tile.m_DefaultSprite = EditorGUILayout.ObjectField("Default Sprite", tile.m_DefaultSprite, typeof(Sprite), false) as Sprite;
             tile.m_DefaultGameObject = EditorGUILayout.ObjectField("Default GameObject", tile.m_DefaultGameObject, typeof(GameObject), false) as GameObject;
             tile.m_DefaultColliderType = (Tile.ColliderType)EditorGUILayout.EnumPopup("Default Collider", tile.m_DefaultColliderType);
+            tile.m_BoundsNeighborStrategy = (RuleTile.BoundsNeighborStrategy)EditorGUILayout.EnumPopup("Bounds Neighbor Strategy", tile.m_BoundsNeighborStrategy);
             tile.m_DefaultTranslate = (Vector3)EditorGUILayout.Vector3Field("Default Translate", tile.m_DefaultTranslate);
             tile.m_DefaultRotate = (Vector3)EditorGUILayout.Vector3Field("Default Rotate", tile.m_DefaultRotate);
             tile.m_DefaultScale = (Vector3)EditorGUILayout.Vector3Field("Default Scale", tile.m_DefaultScale);
