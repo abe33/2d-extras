@@ -53,15 +53,15 @@ namespace UnityEngine
         /// <summary>
         /// The default translation when creating a new Rule.
         /// </summary>
-        public Vector3 m_DefaultTranslate = new Vector3(0,0,0);
+        public Vector3 m_DefaultTranslate = new Vector3(0, 0, 0);
         /// <summary>
         /// The default rotation when creating a new Rule.
         /// </summary>
-        public Vector3 m_DefaultRotate = new Vector3(0,0,0);
+        public Vector3 m_DefaultRotate = new Vector3(0, 0, 0);
         /// <summary>
         /// The default scale when creating a new Rule.
         /// </summary>
-        public Vector3 m_DefaultScale = new Vector3(1,1,1);
+        public Vector3 m_DefaultScale = new Vector3(1, 1, 1);
 
         /// <summary>
         /// Angle in which the RuleTile is rotated by for matching in Degrees.
@@ -76,7 +76,8 @@ namespace UnityEngine
         /// <summary>
         /// The enumeration for the various strategies when handling neighbors of a rule at the edge of the tilemap bounds.
         /// </summary>
-        public enum BoundsNeighborStrategy {
+        public enum BoundsNeighborStrategy
+        {
             /// <summary>
             /// No specific strategy is applied, the original behavior occurs.
             /// </summary>
@@ -140,15 +141,15 @@ namespace UnityEngine
             /// <summary>
             /// The translation to apply for this Rule.
             /// </summary>
-            public Vector3 m_TileTranslate = new Vector3(0,0,0);
+            public Vector3 m_TileTranslate = new Vector3(0, 0, 0);
             /// <summary>
             /// The rotation to apply for this Rule.
             /// </summary>
-            public Vector3 m_TileRotate = new Vector3(0,0,0);
+            public Vector3 m_TileRotate = new Vector3(0, 0, 0);
             /// <summary>
             /// The scale to apply for this Rule.
             /// </summary>
-            public Vector3 m_TileScale = new Vector3(1,1,1);
+            public Vector3 m_TileScale = new Vector3(1, 1, 1);
 
             /// <summary>
             /// The enumeration for matching Neighbors when matching Rule Tiles
@@ -267,7 +268,7 @@ namespace UnityEngine
                 Array.Copy(m_Sprites, rule.m_Sprites, m_Sprites.Length);
                 return rule;
             }
-            
+
             /// <summary>
             /// Returns all neighbors of this Tile as a dictionary
             /// </summary>
@@ -562,7 +563,7 @@ namespace UnityEngine
             }
             return false;
         }
-        
+
         static void ReleaseDestroyedTilemapCacheData()
         {
             if (!NeedRelease())
@@ -599,7 +600,7 @@ namespace UnityEngine
                     if (RuleMatches(rule, position, tilemap, ref transform))
                     {
                         tileAnimationData.animatedSprites = rule.m_Sprites;
-                        tileAnimationData.animationSpeed = Random.Range( rule.m_MinAnimationSpeed, rule.m_MaxAnimationSpeed);
+                        tileAnimationData.animationSpeed = Random.Range(rule.m_MinAnimationSpeed, rule.m_MaxAnimationSpeed);
                         return true;
                     }
                 }
@@ -781,7 +782,7 @@ namespace UnityEngine
         public bool RuleMatches(TilingRule rule, Vector3Int position, ITilemap tilemap, int angle)
         {
             var minCount = Math.Min(rule.m_Neighbors.Count, rule.m_NeighborPositions.Count);
-            for (int i = 0; i < minCount ; i++)
+            for (int i = 0; i < minCount; i++)
             {
                 int neighbor = rule.m_Neighbors[i];
                 Vector3Int positionOffset = GetRotatedPosition(rule.m_NeighborPositions[i], angle);
@@ -879,13 +880,16 @@ namespace UnityEngine
             return position - offset;
         }
 
-        public virtual TileBase GetNeighbor(Vector3Int position, Vector3Int offset, ITilemap tilemap) {
+        public virtual TileBase GetNeighbor(Vector3Int position, Vector3Int offset, ITilemap tilemap)
+        {
             return tilemap.GetTile(GetNeighborPosition(position, offset, tilemap));
         }
 
-        public virtual Vector3Int GetNeighborPosition(Vector3Int position, Vector3Int offset, ITilemap tilemap) {
+        public virtual Vector3Int GetNeighborPosition(Vector3Int position, Vector3Int offset, ITilemap tilemap)
+        {
             Vector3Int offsetPosition = GetOffsetPosition(position, offset);
-            switch(m_BoundsNeighborStrategy) {
+            switch (m_BoundsNeighborStrategy)
+            {
                 case BoundsNeighborStrategy.None:
                     return offsetPosition;
                 case BoundsNeighborStrategy.Clamp:
@@ -904,7 +908,7 @@ namespace UnityEngine
                 position.x, position.y, position.z
             );
 
-            if(position.x >= bounds.max.x)
+            if (position.x >= bounds.max.x)
             {
                 clampedPosition.x = bounds.max.x - 1;
             }
@@ -913,7 +917,7 @@ namespace UnityEngine
                 clampedPosition.x = bounds.min.x;
             }
 
-            if(position.y >= bounds.max.y)
+            if (position.y >= bounds.max.y)
             {
                 clampedPosition.y = bounds.max.y - 1;
             }
@@ -922,7 +926,7 @@ namespace UnityEngine
                 clampedPosition.y = bounds.min.y;
             }
 
-            if(position.z >= bounds.max.z)
+            if (position.z >= bounds.max.z)
             {
                 clampedPosition.z = bounds.max.z - 1;
             }
@@ -959,7 +963,7 @@ namespace UnityEngine
                 wrappedPosition.y = position.y + bounds.size.y;
             }
 
-            if(position.z > bounds.max.z)
+            if (position.z > bounds.max.z)
             {
                 wrappedPosition.z = position.z - bounds.size.z;
             }
