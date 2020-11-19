@@ -419,6 +419,10 @@ namespace UnityEngine
             tileData.flags = TileFlags.LockTransform;
             tileData.transform = iden;
 
+            if(IsPaletteTilemap(tilemap)) {
+                return;
+            }
+
             foreach (TilingRule rule in m_TilingRules)
             {
                 Matrix4x4 transform = iden;
@@ -463,6 +467,10 @@ namespace UnityEngine
 
         static Dictionary<Tilemap, KeyValuePair<HashSet<TileBase>, HashSet<Vector3Int>>> m_CacheTilemapsNeighborPositions = new Dictionary<Tilemap, KeyValuePair<HashSet<TileBase>, HashSet<Vector3Int>>>();
         static TileBase[] m_AllocatedUsedTileArr = new TileBase[0];
+
+        static bool IsPaletteTilemap(ITilemap tilemap) {
+            return tilemap.GetComponent<Tilemap>().gameObject.scene.path == "";
+        }
 
         static bool IsTilemapUsedTilesChange(Tilemap tilemap)
         {
