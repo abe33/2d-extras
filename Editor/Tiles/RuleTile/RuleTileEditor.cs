@@ -570,8 +570,7 @@ namespace UnityEditor
         /// Draw editor fields for custom properties for the RuleTile
         /// </summary>
         /// <param name="isOverrideInstance">Whether override fields are drawn</param>
-        public void DrawCustomFields(bool isOverrideInstance)
-        {
+        public virtual void DrawCustomFields(bool isOverrideInstance) {
             var customFields = tile.GetCustomFields(isOverrideInstance);
 
             serializedObject.Update();
@@ -589,7 +588,6 @@ namespace UnityEditor
                 DestroyPreview();
                 CreatePreview();
             }
-
         }
 
         /// <summary>
