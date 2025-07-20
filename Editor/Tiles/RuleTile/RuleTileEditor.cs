@@ -570,7 +570,8 @@ namespace UnityEditor
         /// Draw editor fields for custom properties for the RuleTile
         /// </summary>
         /// <param name="isOverrideInstance">Whether override fields are drawn</param>
-        public virtual void DrawCustomFields(bool isOverrideInstance) {
+        public virtual void DrawCustomFields(bool isOverrideInstance)
+        {
             var customFields = tile.GetCustomFields(isOverrideInstance);
 
             serializedObject.Update();
@@ -703,7 +704,7 @@ namespace UnityEditor
         /// <param name="tilingRule">Tiling Rule to update neighbor matching rule</param>
         /// <param name="neighbors">A dictionary of neighbors</param>
         /// <param name="position">The relative position of the neighbor matching Rule</param>
-        public void RuleNeighborUpdate(Rect rect, RuleTile.TilingRule tilingRule, Dictionary<Vector3Int, int> neighbors, Vector3Int position)
+        public virtual void RuleNeighborUpdate(Rect rect, RuleTile.TilingRule tilingRule, Dictionary<Vector3Int, int> neighbors, Vector3Int position)
         {
             if (Event.current.type == EventType.MouseDown && ContainsMousePosition(rect))
             {
