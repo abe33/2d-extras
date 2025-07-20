@@ -708,8 +708,7 @@ namespace UnityEditor
         {
             if (Event.current.type == EventType.MouseDown && ContainsMousePosition(rect))
             {
-                var allConsts = tile.m_NeighborType.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
-                var neighborConsts = allConsts.Select(c => (int)c.GetValue(null)).ToList();
+                var neighborConsts = tile.GetNeighborConsts();
                 neighborConsts.Sort();
 
                 if (neighbors.ContainsKey(position))

@@ -337,6 +337,11 @@ namespace UnityEngine
 
         private HashSet<Vector3Int> m_NeighborPositions = new HashSet<Vector3Int>();
 
+        public virtual List<int> GetNeighborConsts()
+        {
+            return new() { 1, 2 };
+        }
+
         /// <summary>
         /// Updates the neighboring positions of this RuleTile
         /// </summary>
