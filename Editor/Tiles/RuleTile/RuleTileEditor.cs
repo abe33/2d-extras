@@ -6,6 +6,7 @@ using UnityEditorInternal;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 using Object = UnityEngine.Object;
+using UnityEditor.Tilemaps;
 
 namespace UnityEditor
 {
@@ -656,17 +657,9 @@ namespace UnityEditor
         /// </summary>
         /// <param name="rect">Rect to draw on</param>
         /// <param name="neighbor">The index to the neighbor matching criteria</param>
-        public void RuleTooltipOnGUI(Rect rect, int neighbor)
+        public virtual void RuleTooltipOnGUI(Rect rect, int neighbor)
         {
-            var allConsts = tile.m_NeighborType.GetFields(BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy);
-            foreach (var c in allConsts)
-            {
-                if ((int)c.GetValue(null) == neighbor)
-                {
-                    GUI.Label(rect, new GUIContent("", c.Name));
-                    break;
-                }
-            }
+            GUI.Label(rect, new GUIContent("", tile.GetNeighborTooltip(neighbor)));
         }
 
         /// <summary>
@@ -711,25 +704,15 @@ namespace UnityEditor
                 var neighborConsts = tile.GetNeighborConsts();
                 neighborConsts.Sort();
 
-                if (neighbors.ContainsKey(position))
-                {
-                    int oldIndex = neighborConsts.IndexOf(neighbors[position]);
-                    int newIndex = oldIndex + GetMouseChange();
-                    if (newIndex >= 0 && newIndex < neighborConsts.Count)
-                    {
-                        newIndex = (int)Mathf.Repeat(newIndex, neighborConsts.Count);
-                        neighbors[position] = neighborConsts[newIndex];
-                    }
-                    else
-                    {
-                        neighbors.Remove(position);
-                    }
-                }
-                else
-                {
-                    neighbors.Add(position, neighborConsts[GetMouseChange() == 1 ? 0 : (neighborConsts.Count - 1)]);
-                }
-                tilingRule.ApplyNeighbors(neighbors);
+                RuleTileEditorPopupContent popupContent = new(
+                    tilingRule,
+                    neighbors,
+                    position,
+                    neighborConsts.ToArray(),
+                    neighborConsts.Select(i => tile.GetNeighborTooltip(i)).ToArray()
+                );
+
+                PopupWindow.Show(rect, popupContent);
 
                 GUI.changed = true;
                 Event.current.Use();

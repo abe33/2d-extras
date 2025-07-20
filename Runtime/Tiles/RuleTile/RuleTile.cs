@@ -337,10 +337,21 @@ namespace UnityEngine
 
         private HashSet<Vector3Int> m_NeighborPositions = new HashSet<Vector3Int>();
 
+#if UNITY_EDITOR
         public virtual List<int> GetNeighborConsts()
         {
             return new() { 1, 2 };
         }
+        public virtual string GetNeighborTooltip(int neighbor)
+        {
+            switch (neighbor)
+            {
+                case TilingRule.Neighbor.This: return "This";
+                case TilingRule.Neighbor.NotThis: return "Not this";
+            }
+            return "";
+        }
+#endif
 
         /// <summary>
         /// Updates the neighboring positions of this RuleTile
