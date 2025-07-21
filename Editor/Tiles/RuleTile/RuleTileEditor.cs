@@ -103,6 +103,8 @@ namespace UnityEditor
                 , "Change this to adjust of the number of tiling rules.");
 
             public static readonly GUIContent tilingRules = EditorGUIUtility.TrTextContent("Tiling Rules");
+            public static readonly GUIContent tilingRulesEnabled = EditorGUIUtility.TrTextContent("Enabled"
+                , "Whether to apply this rule or not");
             public static readonly GUIContent tilingRulesGameObject = EditorGUIUtility.TrTextContent("GameObject"
                 , "The GameObject for the Tile which fits this Rule.");
             public static readonly GUIContent tilingRulesCollider = EditorGUIUtility.TrTextContent("Collider"
@@ -305,7 +307,7 @@ namespace UnityEditor
             BoundsInt bounds = GetRuleGUIBounds(rule.GetBounds(), rule);
 
             float inspectorHeight = GetElementHeight(rule as RuleTile.TilingRuleOutput);
-            float matrixHeight = GetMatrixSize(bounds).y + 10f;
+            float matrixHeight = GetMatrixSize(bounds).y + 10f + (extendNeighbor ? k_SingleLineHeight * 2 : 0);
 
             return Mathf.Max(inspectorHeight, matrixHeight);
         }
@@ -337,7 +339,9 @@ namespace UnityEditor
         /// <returns>Returns the GUI matrix size for a Rule of a RuleTile.</returns>
         public virtual Vector2 GetMatrixSize(BoundsInt bounds)
         {
-            return new Vector2(bounds.size.x * k_SingleLineHeight, bounds.size.y * k_SingleLineHeight);
+            return new Vector2(
+                bounds.size.x * k_SingleLineHeight,
+                bounds.size.y * k_SingleLineHeight);
         }
 
         /// <summary>
@@ -540,6 +544,14 @@ namespace UnityEditor
                 DisplayClipboardText(Styles.emptyRuleTileInfo, rect);
                 GUILayout.Space(rect.height);
                 EditorGUILayout.Space();
+            }
+
+            if (GUILayout.Button("Refresh Scene Tilemaps"))
+            {
+                foreach (var t in FindObjectsByType<Tilemap>(FindObjectsSortMode.None).ToList())
+                {
+                    t.RefreshAllTiles();
+                }
             }
 
             if (m_ReorderableList != null)
@@ -841,6 +853,9 @@ namespace UnityEditor
         public void RuleInspectorOnGUI(Rect rect, RuleTile.TilingRuleOutput tilingRule)
         {
             float y = rect.yMin;
+            GUI.Label(new Rect(rect.xMin, y, k_LabelWidth, k_SingleLineHeight), Styles.tilingRulesEnabled);
+            tilingRule.m_Enabled = EditorGUI.Toggle(new Rect(rect.xMin + k_LabelWidth, y, rect.width - k_LabelWidth, k_SingleLineHeight), tilingRule.m_Enabled);
+            y += k_SingleLineHeight;
             GUI.Label(new Rect(rect.xMin, y, k_LabelWidth, k_SingleLineHeight), Styles.tilingRulesGameObject);
             tilingRule.m_GameObject = (GameObject)EditorGUI.ObjectField(new Rect(rect.xMin + k_LabelWidth, y, rect.width - k_LabelWidth, k_SingleLineHeight), "", tilingRule.m_GameObject, typeof(GameObject), false);
             y += k_SingleLineHeight;

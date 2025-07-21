@@ -150,6 +150,7 @@ namespace UnityEngine
             /// The scale to apply for this Rule.
             /// </summary>
             public Vector3 m_TileScale = new Vector3(1, 1, 1);
+            public bool m_Enabled = true;
 
             /// <summary>
             /// The enumeration for matching Neighbors when matching Rule Tiles
@@ -264,6 +265,7 @@ namespace UnityEngine
                     m_Output = m_Output,
                     m_ColliderType = m_ColliderType,
                     m_RandomTransform = m_RandomTransform,
+                    m_Enabled = m_Enabled,
                 };
                 Array.Copy(m_Sprites, rule.m_Sprites, m_Sprites.Length);
                 return rule;
@@ -365,6 +367,8 @@ namespace UnityEngine
 
             foreach (TilingRule rule in m_TilingRules)
             {
+                if (!rule.m_Enabled) continue;
+
                 foreach (var neighbor in rule.GetNeighbors())
                 {
                     Vector3Int position = neighbor.Key;
@@ -422,6 +426,7 @@ namespace UnityEngine
                 Matrix4x4 transform = iden;
                 foreach (TilingRule rule in m_TilingRules)
                 {
+                    if (!rule.m_Enabled) continue;
                     if (RuleMatches(rule, position, tilemap, ref transform))
                     {
                         transform = orientMatrix * transform;
@@ -470,6 +475,7 @@ namespace UnityEngine
             Matrix4x4 transform = iden;
             foreach (TilingRule rule in m_TilingRules)
             {
+                if (!rule.m_Enabled) continue;
                 if (RuleMatches(rule, position, tilemap, ref transform))
                 {
                     switch (rule.m_Output)
@@ -611,6 +617,7 @@ namespace UnityEngine
             Matrix4x4 transform = Matrix4x4.identity;
             foreach (TilingRule rule in m_TilingRules)
             {
+                if (!rule.m_Enabled) continue;
                 if (rule.m_Output == TilingRuleOutput.OutputSprite.Animation)
                 {
                     if (RuleMatches(rule, position, tilemap, ref transform))
