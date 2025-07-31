@@ -353,6 +353,8 @@ namespace UnityEngine
             }
             return "";
         }
+
+        public virtual Sprite GetIcon(int neighbor) { return null; }
 #endif
 
         /// <summary>

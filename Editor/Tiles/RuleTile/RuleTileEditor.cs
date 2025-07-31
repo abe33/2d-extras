@@ -656,10 +656,29 @@ namespace UnityEditor
                     GUI.DrawTexture(rect, arrows[9]);
                     break;
                 default:
-                    var style = new GUIStyle();
-                    style.alignment = TextAnchor.MiddleCenter;
-                    style.fontSize = 10;
-                    GUI.Label(rect, neighbor.ToString(), style);
+                    Sprite spr = tile.GetIcon(neighbor);
+
+                    if (spr != null)
+                    {
+                        var croppedTexture = new Texture2D((int)spr.rect.width, (int)spr.rect.height);
+                        var pixels = spr.texture.GetPixels(
+                            (int)spr.textureRect.x,
+                            (int)spr.textureRect.y,
+                            (int)spr.textureRect.width,
+                            (int)spr.textureRect.height);
+
+                        croppedTexture.SetPixels(pixels);
+                        croppedTexture.Apply();
+
+                        GUI.DrawTexture(rect, croppedTexture);
+                    }
+                    else
+                    {
+                        var style = new GUIStyle();
+                        style.alignment = TextAnchor.MiddleCenter;
+                        style.fontSize = 10;
+                        GUI.Label(rect, neighbor.ToString(), style);
+                    }
                     break;
             }
         }
