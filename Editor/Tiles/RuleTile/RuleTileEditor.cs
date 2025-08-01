@@ -550,7 +550,10 @@ namespace UnityEditor
             {
                 foreach (var t in FindObjectsByType<Tilemap>(FindObjectsSortMode.None).ToList())
                 {
+                    ClearChildren(t.transform);
+
                     t.RefreshAllTiles();
+                    Debug.Log(t.transform.childCount);
                 }
             }
 
@@ -561,6 +564,30 @@ namespace UnityEditor
                 SaveTile();
 
             GUILayout.Space(k_DefaultElementHeight);
+        }
+
+        protected void ClearChildren(Transform transform)
+        {
+            Debug.Log(transform.childCount);
+            int i = 0;
+
+            //Array to hold all child obj
+            GameObject[] allChildren = new GameObject[transform.childCount];
+
+            //Find all child obj and store to that array
+            foreach (Transform child in transform)
+            {
+                allChildren[i] = child.gameObject;
+                i += 1;
+            }
+
+            //Now destroy them
+            foreach (GameObject child in allChildren)
+            {
+                DestroyImmediate(child.gameObject);
+            }
+
+            Debug.Log(transform.childCount);
         }
 
         private void ResizeRuleTileList(int count)
@@ -656,21 +683,15 @@ namespace UnityEditor
                     GUI.DrawTexture(rect, arrows[9]);
                     break;
                 default:
-                    Sprite spr = tile.GetIcon(neighbor);
+                    var (texture, withThis, withNot) = tile.GetIcon(neighbor);
 
-                    if (spr != null)
+                    if (texture != null)
                     {
-                        var croppedTexture = new Texture2D((int)spr.rect.width, (int)spr.rect.height);
-                        var pixels = spr.texture.GetPixels(
-                            (int)spr.textureRect.x,
-                            (int)spr.textureRect.y,
-                            (int)spr.textureRect.width,
-                            (int)spr.textureRect.height);
-
-                        croppedTexture.SetPixels(pixels);
-                        croppedTexture.Apply();
-
-                        GUI.DrawTexture(rect, croppedTexture);
+                        GUI.DrawTexture(rect, texture);
+                        if (withThis)
+                            GUI.DrawTexture(rect, arrows[GetArrowIndex(position)]);
+                        else if (withNot)
+                            GUI.DrawTexture(rect, arrows[9]);
                     }
                     else
                     {

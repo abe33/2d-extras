@@ -354,7 +354,7 @@ namespace UnityEngine
             return "";
         }
 
-        public virtual Sprite GetIcon(int neighbor) { return null; }
+        public virtual (Texture, bool, bool) GetIcon(int neighbor) { return (null, false, false); }
 #endif
 
         /// <summary>
